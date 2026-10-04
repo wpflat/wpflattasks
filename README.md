@@ -4,7 +4,7 @@ Projects, phases, tasks and task analytics for the Bizy suite.
 
 Needs BizyCore.
 
-Part of the **Bizy** suite (BizyCore, BizyTasks, BizyMoney, BizyDocs, BizyFiles). Each plugin has its own repository and installs on its own; the modules need BizyCore.
+Part of the **Bizy** suite (BizyCore, BizyTasks, BizyMoney, BizyDoc, BizyFiles). Each plugin has its own repository and installs on its own; the modules need BizyCore.
 
 ## Install
 
