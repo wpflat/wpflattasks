@@ -6,7 +6,7 @@ use BizyCore\Migration\Reader;
 
 defined( 'ABSPATH' ) || exit;
 
-/** Takes the projects, phases and tasks out of an old BizyDash backup. Money fields (prices, pay, invoice links) stay for BizyMoney. */
+/** Takes the projects, phases and tasks out of an old BizyDash backup. Money fields (prices, pay, invoice links) stay for BizyFinance. */
 class Legacy {
 
 	public static function init() {

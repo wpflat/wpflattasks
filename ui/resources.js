@@ -1,6 +1,6 @@
 /**
  * Table and form configuration for projects and tasks. Other modules extend them through BizyCore's extension
- * points: task.fields, task.columns, project.fields, project.columns (BizyMoney adds a task's pay and a project's price).
+ * points: task.fields, task.columns, project.fields, project.columns (BizyFinance adds a task's pay and a project's price).
  */
 import { h } from 'vue';
 import { sdk, api, errorMessage, navigate, ElMessage, avatarStyle, fmtDate, initials, relDays, today, dept } from './core';
