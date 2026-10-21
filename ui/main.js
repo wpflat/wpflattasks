@@ -15,7 +15,7 @@ import DepartmentSections from './slots/DepartmentSections.vue';
 import DepartmentCardCounts from './slots/DepartmentCardCounts.vue';
 import HomeStats from './slots/HomeStats.vue';
 
-/** BizyTasks registers its screens and what it adds to BizyCore's pages. Nothing runs unless the module is on. */
+/** WPFlat Tasks registers its screens and what it adds to WPFlat Core's pages. Nothing runs unless the module is on. */
 const M = 'tasks';
 sdk.registerIcon( 'tasks', SquareCheckBig );
 

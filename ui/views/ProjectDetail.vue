@@ -11,7 +11,7 @@ const project = ref( null );
 const error = ref( '' );
 const key = ref( 0 );
 const editing = ref( false );
-// What other modules see when they add to this page (BizyFinance: price, budget and profit).
+// What other modules see when they add to this page (WPFlat Finance: price, budget and profit).
 const ctx = computed( () => ( { project: project.value, projectId: Number( props.id ), tick: key.value, refresh: () => { key.value++; load(); } } ) );
 const hasStats = computed( () => sdk.slot( 'project.stats', ctx.value ).length > 0 );
 

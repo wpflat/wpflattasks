@@ -1,8 +1,8 @@
 <?php
-namespace BizyTasks;
+namespace WPFlatTasks;
 
-use BizyCore\Rest\Routes as Core_Routes;
-use BizyCore\Rest\Resource_Controller;
+use WPFlatCore\Rest\Routes as Core_Routes;
+use WPFlatCore\Rest\Resource_Controller;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -38,8 +38,8 @@ class Routes {
 		global $wpdb;
 		$tk    = Install::table( 'tasks' );
 		$pj    = Install::table( 'projects' );
-		$tm    = $wpdb->prefix . 'bizy_team_members';
-		$cl    = $wpdb->prefix . 'bizy_clients';
+		$tm    = $wpdb->prefix . 'wpflat_team_members';
+		$cl    = $wpdb->prefix . 'wpflat_clients';
 		$today = current_time( 'Y-m-d' );
 		$week  = gmdate( 'Y-m-d', strtotime( $today . ' +7 days' ) );
 		$me    = (int) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $tm WHERE wp_user_id=%d LIMIT 1", get_current_user_id() ) ); // phpcs:ignore WordPress.DB

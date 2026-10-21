@@ -1,6 +1,6 @@
 name: Release
 
-# Push a tag like v0.1.0 (it must match the "Version:" line in bizytasks.php) and this attaches an installable zip to a GitHub release.
+# Push a tag like v0.1.0 (it must match the "Version:" line in wpflattasks.php) and this attaches an installable zip to a GitHub release.
 on:
   push:
     tags: [ 'v*' ]
@@ -14,29 +14,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          path: bizytasks
+          path: wpflattasks
 
       - name: Check the tag matches the plugin version
         run: |
-          V=$(grep -m1 '^ \* Version:' bizytasks/bizytasks.php | awk '{print $3}')
+          V=$(grep -m1 '^ \* Version:' wpflattasks/wpflattasks.php | awk '{print $3}')
           if [ "v$V" != "$GITHUB_REF_NAME" ]; then
-            echo "Tag $GITHUB_REF_NAME does not match Version: $V in bizytasks.php" >&2
+            echo "Tag $GITHUB_REF_NAME does not match Version: $V in wpflattasks.php" >&2
             exit 1
           fi
           echo "VERSION=$V" >> "$GITHUB_ENV"
 
       - name: Build the zip (the plugin folder, without development files)
         run: |
-          zip -rq "bizytasks-$VERSION.zip" bizytasks \
-            -x "bizytasks/.git/*" "bizytasks/.github/*" "bizytasks/.gitignore" "bizytasks/ui/*" "bizytasks/vite*.js" "bizytasks/package*.json" "bizytasks/API.md" \
-               "bizytasks/node_modules/*" "bizytasks/lib/dompdf/tests/*" '*.DS_Store'
-          cp "bizytasks-$VERSION.zip" bizytasks.zip   # a stable name, so .../releases/latest/download/bizytasks.zip always works
-          unzip -l bizytasks.zip | tail -1
+          zip -rq "wpflattasks-$VERSION.zip" wpflattasks \
+            -x "wpflattasks/.git/*" "wpflattasks/.github/*" "wpflattasks/.gitignore" "wpflattasks/ui/*" "wpflattasks/vite*.js" "wpflattasks/package*.json" "wpflattasks/API.md" \
+               "wpflattasks/node_modules/*" "wpflattasks/lib/dompdf/tests/*" '*.DS_Store'
+          cp "wpflattasks-$VERSION.zip" wpflattasks.zip   # a stable name, so .../releases/latest/download/wpflattasks.zip always works
+          unzip -l wpflattasks.zip | tail -1
 
       - name: Publish the release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            bizytasks-${{ env.VERSION }}.zip
-            bizytasks.zip
+            wpflattasks-${{ env.VERSION }}.zip
+            wpflattasks.zip
           generate_release_notes: true

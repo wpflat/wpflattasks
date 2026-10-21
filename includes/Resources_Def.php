@@ -1,11 +1,11 @@
 <?php
-namespace BizyTasks;
+namespace WPFlatTasks;
 
-use BizyCore\Resources;
+use WPFlatCore\Resources;
 
 defined( 'ABSPATH' ) || exit;
 
-/** BizyTasks' REST resources: projects, tasks and project phases (served by BizyCore's resource controller). */
+/** WPFlat Tasks' REST resources: projects, tasks and project phases (served by WPFlat Core's resource controller). */
 class Resources_Def {
 
 	public static function today() {
@@ -17,13 +17,13 @@ class Resources_Def {
 		$PH = Install::table( 'phases' );
 		$TK = Install::table( 'tasks' );
 		global $wpdb;
-		$cl = $wpdb->prefix . 'bizy_clients';
-		$tm = $wpdb->prefix . 'bizy_team_members';
-		$dp = $wpdb->prefix . 'bizy_departments';
+		$cl = $wpdb->prefix . 'wpflat_clients';
+		$tm = $wpdb->prefix . 'wpflat_team_members';
+		$dp = $wpdb->prefix . 'wpflat_departments';
 
 		Resources::register( 'projects', array(
 			'route'     => 'projects',
-			'table'     => 'bizytasks_projects',
+			'table'     => 'wpflattasks_projects',
 			'label'     => 'Project',
 			'select'    => ", c.name AS client_name, o.name AS owner_name, dp.name AS department_name, (SELECT COUNT(*) FROM $TK tk WHERE tk.project_id=t.id) AS task_total, (SELECT COUNT(*) FROM $TK tk2 WHERE tk2.project_id=t.id AND tk2.status='done') AS task_done",
 			'join'      => "LEFT JOIN $cl c ON c.id=t.client_id LEFT JOIN $tm o ON o.id=t.owner_id LEFT JOIN $dp dp ON dp.id=t.department_id",
@@ -38,7 +38,7 @@ class Resources_Def {
 			},
 			'before_save' => function ( $d, $existing ) {
 				if ( isset( $d['status'] ) && ! in_array( $d['status'], array( 'planned', 'active', 'on_hold', 'done' ), true ) ) {
-					return new \WP_Error( 'bizytasks_invalid', 'Unknown project status.', array( 'status' => 400 ) );
+					return new \WP_Error( 'wpflattasks_invalid', 'Unknown project status.', array( 'status' => 400 ) );
 				}
 				return $existing ? $d : $d + array( 'status' => 'active' );
 			},
@@ -61,7 +61,7 @@ class Resources_Def {
 
 		Resources::register( 'tasks', array(
 			'route'     => 'tasks',
-			'table'     => 'bizytasks_tasks',
+			'table'     => 'wpflattasks_tasks',
 			'label'     => 'Task',
 			'select'    => ', c.name AS client_name, p.name AS project_name, ph.name AS phase_name, a.name AS assignee_name',
 			'join'      => "LEFT JOIN $cl c ON c.id=t.client_id LEFT JOIN $P p ON p.id=t.project_id LEFT JOIN $PH ph ON ph.id=t.phase_id LEFT JOIN $tm a ON a.id=t.assignee_id",
@@ -79,7 +79,7 @@ class Resources_Def {
 					$args[] = (int) $a['department_id'];
 				}
 				if ( ! empty( $a['mine'] ) ) {
-					$sql[]  = 't.assignee_id IN (SELECT id FROM ' . $GLOBALS['wpdb']->prefix . 'bizy_team_members WHERE wp_user_id=%d)';
+					$sql[]  = 't.assignee_id IN (SELECT id FROM ' . $GLOBALS['wpdb']->prefix . 'wpflat_team_members WHERE wp_user_id=%d)';
 					$args[] = get_current_user_id();
 				}
 				if ( ! empty( $a['due'] ) ) {
@@ -106,7 +106,7 @@ class Resources_Def {
 			'before_save' => function ( $d, $existing ) {
 				global $wpdb;
 				if ( isset( $d['status'] ) && ! in_array( $d['status'], array( 'todo', 'doing', 'done' ), true ) ) {
-					return new \WP_Error( 'bizytasks_invalid', 'Unknown task status.', array( 'status' => 400 ) );
+					return new \WP_Error( 'wpflattasks_invalid', 'Unknown task status.', array( 'status' => 400 ) );
 				}
 				if ( isset( $d['priority'] ) && ! in_array( $d['priority'], array( 'normal', 'high' ), true ) ) {
 					$d['priority'] = 'normal';
@@ -145,7 +145,7 @@ class Resources_Def {
 
 		Resources::register( 'project-phases', array(
 			'route'     => 'project-phases',
-			'table'     => 'bizytasks_phases',
+			'table'     => 'wpflattasks_phases',
 			'label'     => 'Phase',
 			'select'    => ", (SELECT COUNT(*) FROM $TK tk WHERE tk.phase_id=t.id) AS task_total, (SELECT COUNT(*) FROM $TK tk2 WHERE tk2.phase_id=t.id AND tk2.status='done') AS task_done",
 			'cols'      => array( 'project_id' => 'i', 'name' => 's', 'sort_order' => 'i', 'status' => 's', 'start_date' => 'date', 'due_date' => 'date', 'department_id' => 'i' ),
@@ -159,7 +159,7 @@ class Resources_Def {
 			'before_save' => function ( $d, $existing ) {
 				global $wpdb;
 				if ( isset( $d['status'] ) && ! in_array( $d['status'], array( 'todo', 'doing', 'done' ), true ) ) {
-					return new \WP_Error( 'bizytasks_invalid', 'Unknown phase status.', array( 'status' => 400 ) );
+					return new \WP_Error( 'wpflattasks_invalid', 'Unknown phase status.', array( 'status' => 400 ) );
 				}
 				if ( ! $existing ) {
 					$d += array( 'status' => 'todo' );

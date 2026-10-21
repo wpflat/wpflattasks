@@ -1,19 +1,19 @@
 <?php
-namespace BizyTasks;
+namespace WPFlatTasks;
 
-use BizyCore\Portal;
-use BizyCore\Services\Notifications as N;
+use WPFlatCore\Portal;
+use WPFlatCore\Services\Notifications as N;
 
 defined( 'ABSPATH' ) || exit;
 
-/** The notifications BizyTasks raises, and the daily reminder for tasks that are due. */
+/** The notifications WPFlat Tasks raises, and the daily reminder for tasks that are due. */
 class Notify {
 
 	public static function init() {
-		add_action( 'bizycore_saved_tasks', array( __CLASS__, 'task_saved' ), 10, 2 );
-		add_action( 'bizycore_saved_projects', array( __CLASS__, 'project_saved' ), 10, 2 );
-		add_action( 'bizycore_saved_project-phases', array( __CLASS__, 'phase_saved' ), 10, 2 );
-		add_action( 'bizycore_daily', array( __CLASS__, 'daily' ), 20 );
+		add_action( 'wpflatcore_saved_tasks', array( __CLASS__, 'task_saved' ), 10, 2 );
+		add_action( 'wpflatcore_saved_projects', array( __CLASS__, 'project_saved' ), 10, 2 );
+		add_action( 'wpflatcore_saved_project-phases', array( __CLASS__, 'phase_saved' ), 10, 2 );
+		add_action( 'wpflatcore_daily', array( __CLASS__, 'daily' ), 20 );
 	}
 
 	public static function types() {
@@ -70,12 +70,12 @@ class Notify {
 	/** Tasks due within two days or late, for the person they are assigned to (once per task and date). */
 	public static function daily() {
 		global $wpdb;
-		if ( ! \BizyCore\Registry::enabled( 'tasks' ) ) {
+		if ( ! \WPFlatCore\Registry::enabled( 'tasks' ) ) {
 			return;
 		}
 		$today = current_time( 'Y-m-d' );
 		$soon  = gmdate( 'Y-m-d', strtotime( $today . ' +2 days' ) );
-		$rows  = (array) $wpdb->get_results( $wpdb->prepare( 'SELECT t.id, t.title, t.due_date, t.client_id, m.wp_user_id FROM ' . Install::table( 'tasks' ) . ' t JOIN ' . $wpdb->prefix . "bizy_team_members m ON m.id=t.assignee_id WHERE t.status <> 'done' AND t.due_date IS NOT NULL AND t.due_date <= %s AND m.wp_user_id > 0", $soon ), ARRAY_A ); // phpcs:ignore WordPress.DB
+		$rows  = (array) $wpdb->get_results( $wpdb->prepare( 'SELECT t.id, t.title, t.due_date, t.client_id, m.wp_user_id FROM ' . Install::table( 'tasks' ) . ' t JOIN ' . $wpdb->prefix . "wpflat_team_members m ON m.id=t.assignee_id WHERE t.status <> 'done' AND t.due_date IS NOT NULL AND t.due_date <= %s AND m.wp_user_id > 0", $soon ), ARRAY_A ); // phpcs:ignore WordPress.DB
 		foreach ( $rows as $t ) {
 			$late = $t['due_date'] < $today;
 			N::emit( 'team_task_due', array( (int) $t['wp_user_id'] ), ( $late ? 'Overdue: ' : 'Due soon: ' ) . $t['title'], 'Due ' . wp_date( get_option( 'date_format' ), strtotime( $t['due_date'] ) ) . '.', '/tasks/mine', (int) $t['client_id'], 'task', $t['id'], ( $late ? 'tlate:' : 'tsoon:' ) . $t['id'] . ':' . $t['due_date'] );

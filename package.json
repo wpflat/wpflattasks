@@ -1,9 +1,9 @@
 {
-  "name": "bizytasks",
-  "version": "0.1.0",
+  "name": "wpflattasks",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Projects, phases, tasks and task analytics for the Bizy suite.",
+  "description": "Projects, phases, tasks and task analytics for the WPFlat suite.",
   "scripts": {
     "build": "vite build"
   },

@@ -1,26 +1,26 @@
 <?php
-namespace BizyTasks;
+namespace WPFlatTasks;
 
-use BizyCore\Links;
-use BizyCore\Registry;
-use BizyCore\Services\Notifications;
+use WPFlatCore\Links;
+use WPFlatCore\Registry;
+use WPFlatCore\Services\Notifications;
 
 defined( 'ABSPATH' ) || exit;
 
-/** What BizyTasks adds to BizyCore's shared screens: team figures, department pages, Home, search, links, messages. */
+/** What WPFlat Tasks adds to WPFlat Core's shared screens: team figures, department pages, Home, search, links, messages. */
 class Integrations {
 
 	public static function init() {
-		add_filter( 'bizycore_decorate_team', array( __CLASS__, 'team' ) );
-		add_filter( 'bizycore_department_card', array( __CLASS__, 'department_card' ), 10, 4 );
-		add_filter( 'bizycore_department_detail', array( __CLASS__, 'department_detail' ), 10, 4 );
-		add_filter( 'bizycore_home', array( __CLASS__, 'home' ) );
-		add_filter( 'bizycore_search', array( __CLASS__, 'search' ), 10, 2 );
-		add_filter( 'bizycore_message_contexts', array( __CLASS__, 'message_contexts' ), 10, 2 );
-		add_filter( 'bizycore_message_context_name', array( __CLASS__, 'message_context_name' ), 10, 3 );
-		add_filter( 'bizycore_message_context_staff', array( __CLASS__, 'message_context_staff' ), 10, 3 );
-		add_action( 'bizycore_deleted_projects', array( __CLASS__, 'forget_project' ) );
-		add_action( 'bizycore_deleted_tasks', array( __CLASS__, 'forget_task' ) );
+		add_filter( 'wpflatcore_decorate_team', array( __CLASS__, 'team' ) );
+		add_filter( 'wpflatcore_department_card', array( __CLASS__, 'department_card' ), 10, 4 );
+		add_filter( 'wpflatcore_department_detail', array( __CLASS__, 'department_detail' ), 10, 4 );
+		add_filter( 'wpflatcore_home', array( __CLASS__, 'home' ) );
+		add_filter( 'wpflatcore_search', array( __CLASS__, 'search' ), 10, 2 );
+		add_filter( 'wpflatcore_message_contexts', array( __CLASS__, 'message_contexts' ), 10, 2 );
+		add_filter( 'wpflatcore_message_context_name', array( __CLASS__, 'message_context_name' ), 10, 3 );
+		add_filter( 'wpflatcore_message_context_staff', array( __CLASS__, 'message_context_staff' ), 10, 3 );
+		add_action( 'wpflatcore_deleted_projects', array( __CLASS__, 'forget_project' ) );
+		add_action( 'wpflatcore_deleted_tasks', array( __CLASS__, 'forget_task' ) );
 	}
 
 	private static function t( $n ) {
@@ -67,11 +67,11 @@ class Integrations {
 	}
 
 	public static function forget_project( $row ) {
-		\BizyCore\Links::forget( 'project', $row['id'] );
+		\WPFlatCore\Links::forget( 'project', $row['id'] );
 	}
 
 	public static function forget_task( $row ) {
-		\BizyCore\Links::forget( 'task', $row['id'] );
+		\WPFlatCore\Links::forget( 'task', $row['id'] );
 	}
 
 	/* ---- team ---- */
@@ -132,7 +132,7 @@ class Integrations {
 		$open  = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $tk t $join WHERE t.status <> 'done' AND $d = %d", $id ) ); // phpcs:ignore WordPress.DB
 		$late  = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $tk t $join WHERE t.status <> 'done' AND t.due_date < %s AND $d = %d", $today, $id ) ); // phpcs:ignore WordPress.DB
 		$done  = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $tk t $join WHERE t.status = 'done' AND $d = %d AND t.completed_at >= %s AND t.completed_at <= %s", $id, ( $from ? $from : '1970-01-01' ) . ' 00:00:00', ( $to ? $to : '2999-12-31' ) . ' 23:59:59' ) ); // phpcs:ignore WordPress.DB
-		$projs = (array) $wpdb->get_results( $wpdb->prepare( 'SELECT p.id, p.name, p.due_date, c.name AS client_name, (SELECT COUNT(*) FROM ' . $tk . ' x WHERE x.project_id=p.id) AS total, (SELECT COUNT(*) FROM ' . $tk . " y WHERE y.project_id=p.id AND y.status='done') AS done FROM " . self::t( 'projects' ) . ' p LEFT JOIN ' . $wpdb->prefix . "bizy_clients c ON c.id=p.client_id WHERE p.status IN ('active','planned') AND p.department_id=%d ORDER BY p.due_date IS NULL, p.due_date LIMIT 8", $id ), ARRAY_A ); // phpcs:ignore WordPress.DB
+		$projs = (array) $wpdb->get_results( $wpdb->prepare( 'SELECT p.id, p.name, p.due_date, c.name AS client_name, (SELECT COUNT(*) FROM ' . $tk . ' x WHERE x.project_id=p.id) AS total, (SELECT COUNT(*) FROM ' . $tk . " y WHERE y.project_id=p.id AND y.status='done') AS done FROM " . self::t( 'projects' ) . ' p LEFT JOIN ' . $wpdb->prefix . "wpflat_clients c ON c.id=p.client_id WHERE p.status IN ('active','planned') AND p.department_id=%d ORDER BY p.due_date IS NULL, p.due_date LIMIT 8", $id ), ARRAY_A ); // phpcs:ignore WordPress.DB
 		foreach ( $projs as &$p ) {
 			$p['total']    = (int) $p['total'];
 			$p['done']     = (int) $p['done'];
@@ -150,7 +150,7 @@ class Integrations {
 			return $home;
 		}
 		$today = current_time( 'Y-m-d' );
-		$me    = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . $wpdb->prefix . 'bizy_team_members WHERE wp_user_id=%d LIMIT 1', get_current_user_id() ) ); // phpcs:ignore WordPress.DB
+		$me    = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . $wpdb->prefix . 'wpflat_team_members WHERE wp_user_id=%d LIMIT 1', get_current_user_id() ) ); // phpcs:ignore WordPress.DB
 		if ( $me ) {
 			$rows = (array) $wpdb->get_results( $wpdb->prepare( 'SELECT t.id, t.title, t.due_date, t.priority, p.name AS project_name FROM ' . self::t( 'tasks' ) . ' t LEFT JOIN ' . self::t( 'projects' ) . " p ON p.id=t.project_id WHERE t.status <> 'done' AND t.assignee_id=%d AND t.due_date IS NOT NULL AND t.due_date <= %s ORDER BY t.due_date LIMIT 20", $me, $today ), ARRAY_A ); // phpcs:ignore WordPress.DB
 			foreach ( $rows as $r ) {
@@ -170,15 +170,15 @@ class Integrations {
 
 	public static function search( $out, $q ) {
 		global $wpdb;
-		if ( ! self::on() || ! current_user_can( 'bizytasks_work' ) && ! current_user_can( 'manage_options' ) ) {
+		if ( ! self::on() || ! current_user_can( 'wpflattasks_work' ) && ! current_user_can( 'manage_options' ) ) {
 			return $out;
 		}
 		$like = '%' . $wpdb->esc_like( $q ) . '%';
-		foreach ( (array) $wpdb->get_results( $wpdb->prepare( 'SELECT p.id, p.name, c.name AS client_name FROM ' . self::t( 'projects' ) . ' p LEFT JOIN ' . $wpdb->prefix . 'bizy_clients c ON c.id=p.client_id WHERE p.name LIKE %s ORDER BY p.id DESC LIMIT 6', $like ), ARRAY_A ) as $r ) { // phpcs:ignore WordPress.DB
-			$out[] = array( 'type' => 'project', 'kind' => \BizyCore\Terminology::label( 'project' ), 'id' => (int) $r['id'], 'label' => $r['name'], 'sub' => (string) $r['client_name'], 'route' => '/projects/' . (int) $r['id'] );
+		foreach ( (array) $wpdb->get_results( $wpdb->prepare( 'SELECT p.id, p.name, c.name AS client_name FROM ' . self::t( 'projects' ) . ' p LEFT JOIN ' . $wpdb->prefix . 'wpflat_clients c ON c.id=p.client_id WHERE p.name LIKE %s ORDER BY p.id DESC LIMIT 6', $like ), ARRAY_A ) as $r ) { // phpcs:ignore WordPress.DB
+			$out[] = array( 'type' => 'project', 'kind' => \WPFlatCore\Terminology::label( 'project' ), 'id' => (int) $r['id'], 'label' => $r['name'], 'sub' => (string) $r['client_name'], 'route' => '/projects/' . (int) $r['id'] );
 		}
 		foreach ( (array) $wpdb->get_results( $wpdb->prepare( 'SELECT t.id, t.title, t.project_id, p.name AS project_name FROM ' . self::t( 'tasks' ) . ' t LEFT JOIN ' . self::t( 'projects' ) . ' p ON p.id=t.project_id WHERE t.title LIKE %s ORDER BY t.id DESC LIMIT 6', $like ), ARRAY_A ) as $r ) { // phpcs:ignore WordPress.DB
-			$out[] = array( 'type' => 'task', 'kind' => \BizyCore\Terminology::label( 'task' ), 'id' => (int) $r['id'], 'label' => $r['title'], 'sub' => (string) $r['project_name'], 'route' => $r['project_id'] ? '/projects/' . (int) $r['project_id'] : '/tasks/all' );
+			$out[] = array( 'type' => 'task', 'kind' => \WPFlatCore\Terminology::label( 'task' ), 'id' => (int) $r['id'], 'label' => $r['title'], 'sub' => (string) $r['project_name'], 'route' => $r['project_id'] ? '/projects/' . (int) $r['project_id'] : '/tasks/all' );
 		}
 		return $out;
 	}
@@ -191,7 +191,7 @@ class Integrations {
 			return $list;
 		}
 		foreach ( (array) $wpdb->get_results( $wpdb->prepare( 'SELECT id, name FROM ' . self::t( 'projects' ) . " WHERE client_id=%d ORDER BY FIELD(status,'active','planned','on_hold','done'), id DESC", (int) $client_id ), ARRAY_A ) as $r ) { // phpcs:ignore WordPress.DB
-			$list[] = array( 'type' => 'project', 'id' => (int) $r['id'], 'name' => $r['name'], 'group' => \BizyCore\Terminology::label( 'project', true ) );
+			$list[] = array( 'type' => 'project', 'id' => (int) $r['id'], 'name' => $r['name'], 'group' => \WPFlatCore\Terminology::label( 'project', true ) );
 		}
 		return $list;
 	}
@@ -210,7 +210,7 @@ class Integrations {
 		if ( 'project' !== $type || ! self::on() ) {
 			return $ids;
 		}
-		$oid = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT m.wp_user_id FROM ' . self::t( 'projects' ) . ' p JOIN ' . $wpdb->prefix . 'bizy_team_members m ON m.id=p.owner_id WHERE p.id=%d', $id ) ); // phpcs:ignore WordPress.DB
+		$oid = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT m.wp_user_id FROM ' . self::t( 'projects' ) . ' p JOIN ' . $wpdb->prefix . 'wpflat_team_members m ON m.id=p.owner_id WHERE p.id=%d', $id ) ); // phpcs:ignore WordPress.DB
 		if ( $oid ) {
 			$ids[] = $oid;
 		}

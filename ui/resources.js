@@ -1,6 +1,6 @@
 /**
- * Table and form configuration for projects and tasks. Other modules extend them through BizyCore's extension
- * points: task.fields, task.columns, project.fields, project.columns (BizyFinance adds a task's pay and a project's price).
+ * Table and form configuration for projects and tasks. Other modules extend them through WPFlat Core's extension
+ * points: task.fields, task.columns, project.fields, project.columns (WPFlat Finance adds a task's pay and a project's price).
  */
 import { h } from 'vue';
 import { sdk, api, errorMessage, navigate, ElMessage, avatarStyle, fmtDate, initials, relDays, today, dept } from './core';

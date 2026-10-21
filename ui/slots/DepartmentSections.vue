@@ -2,7 +2,7 @@
 import { fmtDate, navigate, sdk } from '../core';
 
 defineProps( { department: { type: Object, default: () => ( {} ) }, q: { type: Function, default: ( x ) => x } } );
-const C = window.BizyCore.components.ChartCard;
+const C = window.WPFlatCore.components.ChartCard;
 </script>
 
 <template>

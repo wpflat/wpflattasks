@@ -1,8 +1,8 @@
 <?php
-namespace BizyTasks\Services;
+namespace WPFlatTasks\Services;
 
-use BizyTasks\Install;
-use BizyCore\Services\Series;
+use WPFlatTasks\Install;
+use WPFlatCore\Services\Series;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -34,9 +34,9 @@ class TaskAnalytics {
 		$tk = Install::table( 'tasks' );
 		$ph = Install::table( 'phases' );
 		$pj = Install::table( 'projects' );
-		$tm = $wpdb->prefix . 'bizy_team_members';
-		$cl = $wpdb->prefix . 'bizy_clients';
-		$dp = $wpdb->prefix . 'bizy_departments';
+		$tm = $wpdb->prefix . 'wpflat_team_members';
+		$cl = $wpdb->prefix . 'wpflat_clients';
+		$dp = $wpdb->prefix . 'wpflat_departments';
 
 		$where = '1=1' . ( $assignee ? $wpdb->prepare( ' AND t.assignee_id=%d', $assignee ) : '' ) . ( $client ? $wpdb->prepare( ' AND t.client_id=%d', $client ) : '' );
 		$dexp  = 'COALESCE(NULLIF(t.department_id,0), NULLIF(ph.department_id,0), NULLIF(p.department_id,0), 0)';

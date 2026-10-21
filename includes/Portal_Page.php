@@ -1,7 +1,7 @@
 <?php
-namespace BizyTasks;
+namespace WPFlatTasks;
 
-use BizyCore\Portal;
+use WPFlatCore\Portal;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -23,7 +23,7 @@ class Portal_Page {
 	}
 
 	private static function opt( $k ) {
-		return false !== \BizyCore\Settings::get( $k );
+		return false !== \WPFlatCore\Settings::get( $k );
 	}
 
 	public static function projects( $client_id ) {
@@ -53,7 +53,7 @@ class Portal_Page {
 			return null;
 		}
 		$phases = (array) $wpdb->get_results( $wpdb->prepare( 'SELECT id, name, status, start_date, due_date, completed_at FROM ' . Install::table( 'phases' ) . ' WHERE project_id=%d ORDER BY sort_order ASC, id ASC', $id ), ARRAY_A ); // phpcs:ignore WordPress.DB
-		$tasks  = (array) $wpdb->get_results( $wpdb->prepare( 'SELECT t.id, t.title, t.status, t.priority, t.due_date, t.phase_id, t.completed_at' . ( $with_assignee ? ', a.name AS assignee' : '' ) . ' FROM ' . Install::table( 'tasks' ) . ' t' . ( $with_assignee ? ' LEFT JOIN ' . $wpdb->prefix . 'bizy_team_members a ON a.id=t.assignee_id' : '' ) . " WHERE t.project_id=%d ORDER BY FIELD(t.status,'doing','todo','done'), t.due_date IS NULL, t.due_date ASC, t.sort_order ASC, t.id ASC", $id ), ARRAY_A ); // phpcs:ignore WordPress.DB
+		$tasks  = (array) $wpdb->get_results( $wpdb->prepare( 'SELECT t.id, t.title, t.status, t.priority, t.due_date, t.phase_id, t.completed_at' . ( $with_assignee ? ', a.name AS assignee' : '' ) . ' FROM ' . Install::table( 'tasks' ) . ' t' . ( $with_assignee ? ' LEFT JOIN ' . $wpdb->prefix . 'wpflat_team_members a ON a.id=t.assignee_id' : '' ) . " WHERE t.project_id=%d ORDER BY FIELD(t.status,'doing','todo','done'), t.due_date IS NULL, t.due_date ASC, t.sort_order ASC, t.id ASC", $id ), ARRAY_A ); // phpcs:ignore WordPress.DB
 		$by = array();
 		foreach ( $tasks as $t ) {
 			$by[ (int) $t['phase_id'] ][] = $t;

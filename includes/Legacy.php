@@ -1,16 +1,16 @@
 <?php
-namespace BizyTasks;
+namespace WPFlatTasks;
 
-use BizyCore\Migration\Legacy as Core_Legacy;
-use BizyCore\Migration\Reader;
+use WPFlatCore\Migration\Legacy as Core_Legacy;
+use WPFlatCore\Migration\Reader;
 
 defined( 'ABSPATH' ) || exit;
 
-/** Takes the projects, phases and tasks out of an old BizyDash backup. Money fields (prices, pay, invoice links) stay for BizyFinance. */
+/** Takes the projects, phases and tasks out of an old BizyDash backup. Money fields (prices, pay, invoice links) stay for WPFlat Finance. */
 class Legacy {
 
 	public static function init() {
-		add_filter( 'bizycore_legacy_import_tasks', array( __CLASS__, 'import' ), 10, 2 );
+		add_filter( 'wpflatcore_legacy_import_tasks', array( __CLASS__, 'import' ), 10, 2 );
 	}
 
 	/** @return array|\WP_Error */
@@ -22,7 +22,7 @@ class Legacy {
 			$had += (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . Install::table( $new ) ); // phpcs:ignore WordPress.DB
 		}
 		if ( $had && empty( Core_Legacy::module_state( 'tasks' )['done'] ) ) {
-			return new \WP_Error( 'bizytasks_not_empty', 'BizyTasks already has records. Importing would mix them with the old ones. Remove them first, or skip this import.', array( 'status' => 409 ) );
+			return new \WP_Error( 'wpflattasks_not_empty', 'WPFlat Tasks already has records. Importing would mix them with the old ones. Remove them first, or skip this import.', array( 'status' => 409 ) );
 		}
 		foreach ( $tables as $new ) {
 			$wpdb->query( 'TRUNCATE TABLE ' . Install::table( $new ) ); // phpcs:ignore WordPress.DB

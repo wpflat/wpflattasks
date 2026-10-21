@@ -1,16 +1,16 @@
 <?php
-namespace BizyTasks;
+namespace WPFlatTasks;
 
 defined( 'ABSPATH' ) || exit;
 
 class Install {
 
 	const DB_VERSION = '1';
-	const OPTION     = 'bizytasks_db_version';
+	const OPTION     = 'wpflattasks_db_version';
 
 	public static function table( $name ) {
 		global $wpdb;
-		return $wpdb->prefix . 'bizytasks_' . $name;
+		return $wpdb->prefix . 'wpflattasks_' . $name;
 	}
 
 	/** Cheap check on every request so an updated plugin upgrades itself. */
