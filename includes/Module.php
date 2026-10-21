@@ -42,7 +42,7 @@ class Module {
 					'wpflattasks_tasks'    => array( 'project_id' => 'wpflattasks_projects' ),
 				),
 				'roles'         => array(
-					'wpflat_tasks_team' => array( 'label' => 'WPFlat Tasks Team', 'desc' => 'Does the work: projects, phases and tasks.', 'caps' => array( 'wpflattasks_work', 'wpflatcore_messages' ) ),
+					'wpflat_tasks_team' => array( 'label' => 'Tasks Team', 'desc' => 'Does the work: projects, phases and tasks.', 'caps' => array( 'wpflattasks_work', 'wpflatcore_messages' ) ),
 				),
 				'client_manager_caps' => array( 'wpflattasks_work' ),
 				'team_manager_caps'   => array( 'wpflattasks_work' ),

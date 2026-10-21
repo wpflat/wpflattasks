@@ -1,6 +1,6 @@
 {
   "name": "wpflattasks",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "description": "Projects, phases, tasks and task analytics for the WPFlat suite.",
