@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WPFlat Tasks
  * Description: Projects, phases and tasks for the WPFlat suite. Needs WPFlat Core.
- * Version: 0.2.1
+ * Version: 0.3.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: Digitalzooks
@@ -12,7 +12,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WPFLATTASKS_VERSION', '0.2.1' );
+define( 'WPFLATTASKS_VERSION', '0.3.0' );
 define( 'WPFLATTASKS_FILE', __FILE__ );
 define( 'WPFLATTASKS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WPFLATTASKS_URL', plugin_dir_url( __FILE__ ) );

@@ -19,6 +19,7 @@ import HomeStats from './slots/HomeStats.vue';
 const M = 'tasks';
 sdk.registerIcon( 'tasks', SquareCheckBig );
 
+sdk.registerQuickAdd?.( M, [ { label: 'New task', route: '/tasks/mine?new=1' }, { label: 'New project', route: '/tasks/projects?new=1' } ] );
 sdk.registerRoute( { path: '/tasks', module: M, component: WorkOverview } );
 sdk.registerRoute( { path: '/tasks/:tab', module: M, component: Work } );
 sdk.registerRoute( { path: '/projects/:id', module: M, component: ProjectDetail } );
